@@ -125,7 +125,8 @@ function handlePayload(json) {
 
 $(function() {
   window.timeouts = {};
-  var ws = new WebSocket('ws://' + window.location.host + '/ws');
+  var wsUrl = (window.wsUrl || 'ws://' + window.location.host + '/ws');
+  var ws = new WebSocket(wsUrl);
 
   ws.onopen = function() {
     console.log('> onopen');
