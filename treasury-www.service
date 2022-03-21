@@ -1,0 +1,13 @@
+[Unit]
+Description=Treasury web UI
+
+[Service]
+EnvironmentFile=/etc/treasury-www.env
+ExecStart=/usr/local/bin/treasury-www
+Type=simple
+User=treasury
+Group=treasury
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
