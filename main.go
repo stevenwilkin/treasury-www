@@ -13,6 +13,20 @@ import (
 //go:embed www
 var www embed.FS
 
+func fileSystem() http.FileSystem {
+	if os.Getenv("ENV") == "dev" {
+		log.Info("Development mode")
+		return http.Dir("www")
+	}
+
+	content, err := fs.Sub(fs.FS(www), "www")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return http.FS(content)
+}
+
 func main() {
 	port := "8080"
 	if wwwPort := os.Getenv("WWW_PORT"); len(wwwPort) > 0 {
@@ -25,12 +39,7 @@ func main() {
 			w.Write([]byte(wsUrl))
 		}))
 
-	content, err := fs.Sub(fs.FS(www), "www")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	http.Handle("/", http.FileServer(http.FS(content)))
+	http.Handle("/", http.FileServer(fileSystem()))
 
 	log.Infof("Listening on 0.0.0.0:%s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
